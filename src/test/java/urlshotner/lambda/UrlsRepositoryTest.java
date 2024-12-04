@@ -10,6 +10,7 @@ import urlshotner.lambda.entity.Urls;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 import urlshotner.lambda.repository.UrlsRepository;
 
 import static org.mockito.Mockito.*;
@@ -20,6 +21,9 @@ class UrlsRepositoryTest {
 
     @Mock
     private EntityManager entityManager;
+
+    @Mock
+    private TypedQuery<Urls> typedQuery;
 
     @InjectMocks
     private UrlsRepository urlsRepository;
@@ -55,5 +59,47 @@ class UrlsRepositoryTest {
 
         assertEquals("Persistence error", exception.getMessage());
         verify(entityManager, times(1)).persist(sampleUrls);
+    }
+
+    @Test
+    void testFindByUniqueToken_Success() {
+        // Arrange
+        String uniqueToken = "ABCDEF1234567890ABCDEF";
+        when(entityManager.createQuery(
+                "SELECT u FROM Urls u WHERE u.uniqueToken = :uniqueToken", Urls.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("uniqueToken", uniqueToken)).thenReturn(typedQuery);
+        when(typedQuery.getSingleResult()).thenReturn(sampleUrls);
+
+        // Act
+        Urls result = urlsRepository.findByUniqueToken(uniqueToken);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(sampleUrls, result);
+        verify(entityManager, times(1)).createQuery(
+                "SELECT u FROM Urls u WHERE u.uniqueToken = :uniqueToken", Urls.class);
+        verify(typedQuery, times(1)).setParameter("uniqueToken", uniqueToken);
+        verify(typedQuery, times(1)).getSingleResult();
+    }
+
+    @Test
+    void testFindByUniqueToken_NoResult() {
+        // Arrange
+        String uniqueToken = "INVALID_TOKEN";
+        when(entityManager.createQuery(
+                "SELECT u FROM Urls u WHERE u.uniqueToken = :uniqueToken", Urls.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("uniqueToken", uniqueToken)).thenReturn(typedQuery);
+        when(typedQuery.getSingleResult()).thenThrow(new PersistenceException("No result"));
+
+        // Act & Assert
+        PersistenceException exception = assertThrows(PersistenceException.class, () -> {
+            urlsRepository.findByUniqueToken(uniqueToken);
+        });
+
+        assertEquals("No result", exception.getMessage());
+        verify(entityManager, times(1)).createQuery(
+                "SELECT u FROM Urls u WHERE u.uniqueToken = :uniqueToken", Urls.class);
+        verify(typedQuery, times(1)).setParameter("uniqueToken", uniqueToken);
+        verify(typedQuery, times(1)).getSingleResult();
     }
 }

@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import urlshotner.lambda.entity.Urls;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 @ApplicationScoped

@@ -16,6 +16,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-jdbc-mysql'
     implementation("io.quarkus:quarkus-spring-web")
     implementation 'io.quarkus:quarkus-amazon-lambda-http'
+
+    testImplementation "io.quarkus:quarkus-junit5"
+    testImplementation "io.quarkus:quarkus-test-amazon-lambda"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.mockito:mockito-core:4.0.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.0.0'
@@ -31,12 +34,19 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-test {
-    useJUnitPlatform()
+jacoco {
+    toolVersion = "0.8.10"
 }
 
-jacoco {
-    toolVersion = "0.8.7"
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // Garante o relatório mesmo que o teste falhe
+
+    // Evita problemas de instrumentação com Java 21
+    jvmArgs += [
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/sun.util.locale.provider=ALL-UNNAMED"
+    ]
 }
 
 jacocoTestReport {

@@ -1,3 +1,7 @@
 {
-  "name": "Bill"
+  "httpMethod": "POST",
+  "path": "/build",
+  "queryStringParameters": {
+    "url": "https://example.com"
+  }
 }

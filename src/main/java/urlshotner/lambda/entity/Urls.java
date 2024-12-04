@@ -32,9 +32,9 @@ public class Urls {
 
     // Getters e Setters
 
-    public Long getId() {
-        return id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
 
     public String getUrlOriginal() {
         return urlOriginal;
