@@ -120,4 +120,29 @@ class BuildControllerTest {
         assertEquals(20, token.length(), "O token deve ter exatamente 20 caracteres.");
         assertTrue(token.matches("[0-9A-F]+"), "O token deve conter apenas caracteres hexadecimais.");
     }
+
+    @Test
+    void testErrorResponseSettersAndConstructor() {
+        // Testar o construtor padrão
+        BuildController.ErrorResponse errorResponse = new BuildController.ErrorResponse();
+        assertNotNull(errorResponse, "O objeto ErrorResponse não deve ser nulo.");
+
+        // Testar o setter e getter
+        String message = "Mensagem de erro";
+        errorResponse.setMessage(message);
+        assertEquals(message, errorResponse.getMessage(), "A mensagem deve ser configurada corretamente.");
+    }
+
+    @Test
+    void testUrlEncodedResponseSettersAndConstructor() {
+        // Testar o construtor padrão
+        BuildController.UrlEncodedResponse urlEncodedResponse = new BuildController.UrlEncodedResponse();
+        assertNotNull(urlEncodedResponse, "O objeto UrlEncodedResponse não deve ser nulo.");
+
+        // Testar o setter e getter
+        String urlEncoded = "https://pagar.vindi/ABC123";
+        urlEncodedResponse.setUrl_encoded(urlEncoded);
+        assertEquals(urlEncoded, urlEncodedResponse.getUrl_encoded(), "A URL codificada deve ser configurada corretamente.");
+    }
+
 }
